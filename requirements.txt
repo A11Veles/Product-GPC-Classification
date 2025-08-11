@@ -1,0 +1,10 @@
+accelerate
+# torch
+numpy
+pandas
+matplotlib
+scikit-learn
+sentence-transformers
+huggingface-hub
+nltk
+bitsandbytes
