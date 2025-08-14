@@ -41,28 +41,21 @@ def evaluate_embedding_model(
     product_names = df[column_name].tolist()[:num_samples]
     classes = list(set(df["class"].tolist()))
 
-    scores = []
-    classes_idx = []
-    runtime = []
-    y_true_all = df["class"].tolist()[:num_samples]
-    for i, product_name in enumerate(tqdm(product_names), start=1):
-        start = time.time()
-        score = model.get_scores([product_name], classes)
-        end = time.time()
-        runtime.append(end-start)
-        class_idx = torch.argmax(score, dim=1)
-        scores.append(score)
-        classes_idx.append(class_idx)
-
-        if i % 100 == 0:
-            y_pred_temp = [classes[idx] for idx in classes_idx]
-            y_true_temp = y_true_all[:i]
-            temp_score = evaluation_score(y_true_temp, y_pred_temp, "weighted")
-            print(f"Step {i}: Intermediate score = {temp_score:.4f}")
-
-    print(f"Average time taken for a single example: {statistics.mean(runtime)} seconds\nNumber of examples: {len(runtime)}")
+    # Process all samples at once using batch processing
+    start = time.time()
+    scores = model.get_scores(product_names, classes)
+    end = time.time()
+    
+    # Get predictions from scores
+    classes_idx = torch.argmax(scores, dim=1)
     y_pred = [classes[idx] for idx in classes_idx]
-    y_true =  df["class"].tolist()[:num_samples]
+    y_true = df["class"].tolist()[:num_samples]
+    
+    # Calculate and print timing information
+    total_time = end - start
+    avg_time_per_sample = total_time / len(product_names)
+    print(f"Average time taken for a single example: {avg_time_per_sample:.6f} seconds\nNumber of examples: {len(product_names)}")
+    print(f"Total processing time: {total_time:.4f} seconds")
 
     model_score = evaluation_score(y_true, y_pred, "weighted")
 
