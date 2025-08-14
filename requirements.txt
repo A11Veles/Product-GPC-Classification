@@ -8,3 +8,6 @@ sentence-transformers
 huggingface-hub
 nltk
 bitsandbytes
+openpyxl
+teradatasql
+pyarrow

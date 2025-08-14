@@ -1,0 +1,59 @@
+2025-08-12 14:00:13,117 - teradata.udaexec - INFO - Initializing UdaExec...
+2025-08-12 14:00:13,117 - teradata.udaexec - INFO - Reading config files: ['C:\\etc\\udaexec.ini: Not Found', 'C:\\Users\\na255073\\udaexec.ini: Not Found', 'C:\\Users\\na255073\\Documents\\Product-GPC-Classification\\udaexec.ini: Not Found']
+2025-08-12 14:00:13,117 - teradata.udaexec - INFO - No previous run number found as C:\Users\na255073\Documents\Product-GPC-Classification\.runNumber does not exist. Initializing run number to 1
+2025-08-12 14:00:13,117 - teradata.udaexec - INFO - Cleaning up log files older than 90 days.
+2025-08-12 14:00:13,122 - teradata.udaexec - INFO - Removed 0 log files.
+2025-08-12 14:00:13,290 - teradata.udaexec - INFO - Checkpoint file not found: C:\Users\na255073\Documents\Product-GPC-Classification\csv_loader.checkpoint
+2025-08-12 14:00:13,290 - teradata.udaexec - INFO - No previous checkpoint found, executing from beginning...
+2025-08-12 14:00:13,290 - teradata.udaexec - INFO - Execution Details:
+/********************************************************************************
+ * Application Name: csv_loader
+ *          Version: 1.0
+ *       Run Number: 20250812140013-1
+ *             Host: TD-JY6N0B4
+ *         Platform: Windows-11-10.0.26100-SP0
+ *          OS User: na255073
+ *   Python Version: 3.12.0
+ *  Python Compiler: MSC v.1935 64 bit (AMD64)
+ *     Python Build: ('tags/v3.12.0:0fb18b0', 'Oct  2 2023 13:03:39')
+ *  UdaExec Version: 15.10.0.21
+ *     Program Name: C:\Users\na255073\Documents\Product-GPC-Classification\src\data_load\train_load.py
+ *      Working Dir: C:\Users\na255073\Documents\Product-GPC-Classification
+ *      Git Version: git version 2.50.1.windows.1
+ *     Git Revision: c48b79b
+ *        Git Dirty: True [ M .gitignore,?? .runNumber,?? config/.env.example,?? config/__init__.py,?? config/settings.py,?? logs/csv_loader.20250812140013-1.log,?? src/data_load/]
+ *          Log Dir: C:\Users\na255073\Documents\Product-GPC-Classification\logs
+ *         Log File: C:\Users\na255073\Documents\Product-GPC-Classification\logs\csv_loader.20250812140013-1.log
+ *     Config Files: ['C:\\etc\\udaexec.ini: Not Found', 'C:\\Users\\na255073\\udaexec.ini: Not Found', 'C:\\Users\\na255073\\Documents\\Product-GPC-Classification\\udaexec.ini: Not Found']
+ *      Query Bands: ApplicationName=csv_loader;Version=1.0;JobID=20250812140013-1;ClientUser=na255073;Production=False;udaAppLogFile=C:\Users\na255073\Documents\Product-GPC-Classification\logs\csv_loader.20250812140013-1.log;gitRevision=c48b79b;gitDirty=True;UtilityName=PyTd;UtilityVersion=15.10.0.21
+********************************************************************************/
+2025-08-12 14:00:13,347 - teradata.udaexec - INFO - Creating connection: {'method': 'odbc', 'system': 'iteration7-w9og53takluu3v27.env.clearscape.teradata.com', 'username': 'demo_user', 'password': 'XXXXXX', 'charset': 'UTF8'}
+2025-08-12 14:00:13,385 - teradata.tdodbc - INFO - Available drivers: SQL Server, Microsoft Access Driver (*.mdb, *.accdb), Microsoft Excel Driver (*.xls, *.xlsx, *.xlsm, *.xlsb), Microsoft Access Text Driver (*.txt, *.csv), Microsoft Access dBASE Driver (*.dbf, *.ndx, *.mdx)
+2025-08-12 14:00:13,385 - teradata.udaexec - ERROR - Unable to create connection: {'method': 'odbc', 'system': 'iteration7-w9og53takluu3v27.env.clearscape.teradata.com', 'username': 'demo_user', 'password': 'XXXXXX', 'charset': 'UTF8'}
+Traceback (most recent call last):
+  File "C:\Users\na255073\Documents\Product-GPC-Classification\.venv\Lib\site-packages\teradata\udaexec.py", line 180, in connect
+    self, tdodbc.connect(queryBands=self.queryBands,
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\na255073\Documents\Product-GPC-Classification\.venv\Lib\site-packages\teradata\tdodbc.py", line 427, in __init__
+    connectParams["DRIVER"] = determineDriver(dbType, driver)
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\na255073\Documents\Product-GPC-Classification\.venv\Lib\site-packages\teradata\tdodbc.py", line 388, in determineDriver
+    raise InterfaceError(
+teradata.api.InterfaceError: ('DRIVER_NOT_FOUND', "No driver found for 'Teradata'.  Available drivers: SQL Server,Microsoft Access Driver (*.mdb, *.accdb),Microsoft Excel Driver (*.xls, *.xlsx, *.xlsm, *.xlsb),Microsoft Access Text Driver (*.txt, *.csv),Microsoft Access dBASE Driver (*.dbf, *.ndx, *.mdx)")
+2025-08-12 14:00:13,387 - teradata.udaexec - ERROR - Uncaught exception
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "C:\Users\na255073\Documents\Product-GPC-Classification\src\data_load\train_load.py", line 38, in <module>
+    with uda.connect(method="odbc", system=TD_HOST, username=TD_USER, password=TD_PASS, charset="UTF8") as conn:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\na255073\Documents\Product-GPC-Classification\.venv\Lib\site-packages\teradata\udaexec.py", line 180, in connect
+    self, tdodbc.connect(queryBands=self.queryBands,
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\na255073\Documents\Product-GPC-Classification\.venv\Lib\site-packages\teradata\tdodbc.py", line 427, in __init__
+    connectParams["DRIVER"] = determineDriver(dbType, driver)
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\na255073\Documents\Product-GPC-Classification\.venv\Lib\site-packages\teradata\tdodbc.py", line 388, in determineDriver
+    raise InterfaceError(
+teradata.api.InterfaceError: ('DRIVER_NOT_FOUND', "No driver found for 'Teradata'.  Available drivers: SQL Server,Microsoft Access Driver (*.mdb, *.accdb),Microsoft Excel Driver (*.xls, *.xlsx, *.xlsm, *.xlsb),Microsoft Access Text Driver (*.txt, *.csv),Microsoft Access dBASE Driver (*.dbf, *.ndx, *.mdx)")
+2025-08-12 14:00:13,387 - teradata.udaexec - INFO - UdaExec exiting.
