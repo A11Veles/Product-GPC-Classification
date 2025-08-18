@@ -11,3 +11,4 @@ bitsandbytes
 openpyxl
 teradatasql
 pyarrow
+python-dotenv

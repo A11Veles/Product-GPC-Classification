@@ -1,7 +1,7 @@
 import numpy as np, pandas as pd, teradatasql
 from config.settings import TD_HOST, TD_USER, TD_PASS, TD_DB
 
-PARQUET = "src/full_embeddings.parquet"
+PARQUET = "outputs/new_train_embeddings.parquet"
 TABLE   = f"{TD_DB}.train_embeddings_fc"
 
 df   = pd.read_parquet(PARQUET)

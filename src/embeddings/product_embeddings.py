@@ -1,23 +1,26 @@
-# import pandas as pd
-# import numpy as np
-# from sentence_transformers import SentenceTransformer
+import pandas as pd, numpy as np
+from sentence_transformers import SentenceTransformer
 
+from src.utils import load_embedding_model
+from src.constants import E5_LARGE_INSTRUCT_CONFIG_PATH
 
-# df = pd.read_csv("data/train_val.csv")   # or load from ClearScape
-# texts = ("query: " + df["Item_Name"].fillna("").astype(str)).tolist()
+IN_CSV  = "data/train_val.csv"           
+TEXTCOL = "Item_Name"               
+OUT_PARQUET = "outputs/new_train_embeddings.parquet"
 
-# model = SentenceTransformer("intfloat/e5-large-v2")
-# model.max_seq_length = 512
+model = load_embedding_model(E5_LARGE_INSTRUCT_CONFIG_PATH)
 
-# emb = model.encode(
-#     texts,
-#     convert_to_numpy=True,
-#     show_progress_bar=True,
-#     normalize_embeddings=True
-# ).astype(np.float32)
+df = pd.read_csv(IN_CSV)
+texts = ("passage: " + df[TEXTCOL].fillna("").astype(str)).tolist()
 
-# df["embedding_dim"] = emb.shape[1]
-# df["embedding"] = [v.tolist() for v in emb]
+emb = model.encode(texts, convert_to_numpy=True, show_progress_bar=True, normalize_embeddings=True)
+emb = emb.astype(np.float32)
 
-# df.to_parquet("outputs/train_embeddings.csv", index=False)
-# print("Wrote product embeddings for", len(df), "rows (dim", emb.shape[1], ")")
+df_out = pd.DataFrame({
+    "row_id": np.arange(1, len(df)+1, dtype=np.int64),
+    "item_name": df[TEXTCOL].astype(str),
+    "embedding_dim": emb.shape[1],
+    "embedding": [v.tolist() for v in emb]
+})
+df_out.to_parquet(OUT_PARQUET, index=False)
+print(f"✅ wrote {OUT_PARQUET} rows={len(df_out)} dim={emb.shape[1]}")

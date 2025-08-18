@@ -1,39 +1,39 @@
-# src/classification/similarity.py
 import teradatasql
 from config.settings import TD_HOST, TD_USER, TD_PASS, TD_DB
 
-TOP_K = 5
-DIM   = 1024
-T_TRAIN = f"{TD_DB}.train_embeddings_fc"   # row_id, v1..v{DIM}
-T_GPC   = f"{TD_DB}.gpc_labels_fc"         # gpc_id, v1..v{DIM}
-T_OUT   = f"{TD_DB}.train_predictions_fc"  # row_id, gpc_id, score, pred_rank
+ITEM_EMBEDDINGS_TABLE = f"{TD_DB}.train_embeddings_fc"  
+GPC_EMBEDDINGS_TABLE  = f"{TD_DB}.gpc_labels_fc"         
+RESULT_TABLE          = f"{TD_DB}.train_predictions_fc" 
 
-# Feature column lists per docs
-vcols = ",".join([f"'v{i}'" for i in range(1, DIM+1)])
+vector_cols        = ", ".join([f"v{i}" for i in range(1, 1024 + 1)])
+vector_cols_quoted = ", ".join([f"'v{i}'" for i in range(1, 1024 + 1)])
 
 sql = f"""
-DELETE FROM {T_OUT};
+DELETE FROM {RESULT_TABLE};
 
-INSERT INTO {T_OUT} (row_id, gpc_id, score, pred_rank)
-SELECT
-  row_id,
-  gpc_id,
-  1 - distance AS score,         -- cosine distance -> similarity
-  d."rank"     AS pred_rank      -- quote reserved word
-FROM TD_SYSFNLIB.TD_VectorDistance (
-  ON {T_TRAIN}    AS TargetTable    PARTITION BY ANY
-  ON {T_GPC}      AS ReferenceTable PARTITION BY ANY
-  USING
-    TargetIDColumn        ('row_id')
-    TargetFeatureColumns  ({vcols})
-    RefIDColumn           ('gpc_id')
-    RefFeatureColumns     ({vcols})
-    DistanceType          ('COSINE')   -- some pages use DistanceMeasure
-    TopK                  ({TOP_K})
-) AS d;
+INSERT INTO {RESULT_TABLE} (row_id, gpc_id, score)
+SELECT row_id, gpc_id, score
+FROM (
+  SELECT
+    o.Target_ID    AS row_id,
+    o.Reference_ID AS gpc_id,
+    1 - o.Distance AS score,  -- cosine distance -> similarity
+    ROW_NUMBER() OVER (PARTITION BY o.Target_ID ORDER BY o.Distance ASC) AS rn
+  FROM TD_SYSFNLIB.TD_VectorDistance (
+    ON (SELECT row_id, {vector_cols} FROM {ITEM_EMBEDDINGS_TABLE}) AS TargetTable
+    ON (SELECT gpc_id,  {vector_cols} FROM {GPC_EMBEDDINGS_TABLE})  AS ReferenceTable DIMENSION
+    USING
+      TargetIDColumn       ('row_id')
+      RefIDColumn          ('gpc_id')
+      TargetFeatureColumns ({vector_cols_quoted})
+      RefFeatureColumns    ({vector_cols_quoted})
+      DistanceMeasure      ('cosine')
+  ) AS o
+) s
+WHERE rn = 1;  -- change to <= K for top-K
 """
 
 with teradatasql.connect(host=TD_HOST, user=TD_USER, password=TD_PASS) as con:
     con.cursor().execute(sql)
 
-print(f"✅ Populated {T_OUT} with Top-{TOP_K} cosine similarity via TD_VectorDistance")
+print(f"✅ {RESULT_TABLE} refreshed with top-1 cosine similarity (in-DB TD_VectorDistance).")
