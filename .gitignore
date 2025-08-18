@@ -1,6 +1,8 @@
 **/__pycache__/*
 *venv/*
-data/*
+# data/*
+data/cleaned_train.csv
+data/train_val.csv
 outputs/
 config/.env
 results/*
