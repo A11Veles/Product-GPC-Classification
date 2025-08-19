@@ -12,7 +12,7 @@ sql = f"""
 DELETE FROM {RESULT_TABLE};
 
 INSERT INTO {RESULT_TABLE} (row_id, gpc_id, score)
-SELECT row_id, gpc_id, score
+SELECT row_id, gpc_id, score, rn AS pred_rank
 FROM (
   SELECT
     o.Target_ID    AS row_id,
